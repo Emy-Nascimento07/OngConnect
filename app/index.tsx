@@ -15,8 +15,10 @@ export default function Index() {
   const verificacaoLogin = () => {
     if (email.includes("@") && password.length > 6) {
       console.log("✅ Acesso autorizado para:", email);
+      console.table({ email, password });
     } else {
       console.log("❌ Falha no login: E-mail inválido ou senha muito curta.");
+      console.table({ email, password });
     }
   };
 
