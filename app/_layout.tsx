@@ -6,8 +6,12 @@ export default function Layout() {
       screenOptions={{
         headerShown: false, // Remove a barra branca
       }}
-    />
-  );
+
+    >
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+    </Stack>
+      );
 }
 
 export const unstable_settings = {

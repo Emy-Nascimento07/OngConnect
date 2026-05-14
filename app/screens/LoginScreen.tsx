@@ -1,15 +1,15 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Alert,
 } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types/navigation";
+import { RootStackParamList } from "../types/navigation";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -19,54 +19,78 @@ export default function LoginScreen({ navigation }: Props) {
   const [password, setPassword] = useState("");
 
   const verificacaoLogin = () => {
-    if (nome.trim().length > 0 && email.includes("@") && password.length > 5) {
-      navigation.navigate("Dashboard", {
-        userName: nome,
-        voluntarioId: "ID-" + Math.random().toString(),
+    const nomeLimpo = nome.trim();
+    const emailLimpo = email.trim();
+
+    if (
+      nomeLimpo.length > 0 &&
+      emailLimpo.includes("@") &&
+      password.length > 5
+    ) {
+      navigation.navigate("MainTabs", {
+        userName: nomeLimpo,
+        voluntarioId: "VOL-" + Math.floor(Math.random() * 10000).toString(),
       });
-    } else {
-      alert(
-        "Verifique os campos! O nome é obrigatório e a senha deve ter +5 caracteres.",
-      );
+    } else if (nomeLimpo.length < 1) {
+      Alert.alert("Atenção", "O nome do voluntário é obrigatório!");
+    } else if (!emailLimpo.includes("@")) {
+      Alert.alert("Atenção", "Insira um e-mail válido contendo '@'.");
+    } else if (password.length <= 5) {
+      Alert.alert("Atenção", "A senha deve conter mais de 5 caracteres.");
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.containerLogo}>
-        <Image style={styles.logo} source={require("../../assets/logo.png")} />
+        <Image
+          style={styles.logo}
+          source={require("../assets/images/logo.png")}
+        />
         <Text style={styles.name}>ONG Connect</Text>
       </View>
 
       <View style={styles.formulario}>
         <TextInput
           style={styles.input}
-          placeholder="Seu nome de voluntário"
+          placeholder="Nome do Voluntário"
           onChangeText={setNome}
           value={nome}
+          placeholderTextColor="#999"
         />
+
         <TextInput
           style={styles.input}
           keyboardType="email-address"
-          placeholder="E-mail"
+          autoCapitalize="none"
+          placeholder="E-mail corporativo ou pessoal"
           onChangeText={setEmail}
           value={email}
+          placeholderTextColor="#999"
         />
-        <Text style={styles.textoAjuda}>Logando como: {email}</Text>
+        {email.length > 0 && (
+          <Text style={styles.textoAjuda}>Logando como: {email}</Text>
+        )}
 
         <TextInput
           style={styles.input}
-          placeholder="Senha"
+          placeholder="Senha de acesso"
           secureTextEntry
           onChangeText={setPassword}
           value={password}
+          placeholderTextColor="#999"
         />
-        <Text style={styles.textoAjuda}>⚠️Senha deve ter mais de 5 caracteres</Text>
-
+        <Text style={styles.textoAlerta}>
+          ⚠️ A senha precisa ter mais de 5 dígitos.
+        </Text>
       </View>
 
-      <TouchableOpacity style={styles.buttonLogin} onPress={verificacaoLogin}>
-        <Text style={styles.buttonText2}>Entrar</Text>
+      <TouchableOpacity
+        style={styles.buttonLogin}
+        onPress={verificacaoLogin}
+        activeOpacity={0.85}
+      >
+        <Text style={styles.buttonText}>Entrar na Rede</Text>
       </TouchableOpacity>
     </View>
   );
@@ -75,64 +99,76 @@ export default function LoginScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f1ffec",
+    backgroundColor: "#F5FDF8",
+  },
+  containerLogo: {
+    marginBottom: 40,
+    alignItems: "center",
   },
   logo: {
-    width: 250,
-    height: 200,
+    width: 200,
+    height: 160,
+    resizeMode: "contain",
   },
   name: {
     fontSize: 32,
-    fontWeight: "700",
-    color: "#1b489d",
-    margin: 0,
+    fontWeight: "800",
+    color: "#2E6641",
+    marginTop: 10,
   },
-  buttonText2: {
-    color: "#000000",
-    fontSize: 18,
-    fontWeight: "bold",
-    opacity: 0.8,
-  },
-  buttonLogin: {
-    backgroundColor: "#62a6fe",
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: "#3c6395",
+  formulario: {
+    width: "85%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 20,
+    elevation: 4,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
-    marginBottom: 10,
-    marginTop: 5,
+    marginBottom: 20,
   },
   input: {
     width: "100%",
-    padding: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    marginBottom: 10,
-  },
-  formulario: {
-    width: "80%",
-    alignItems: "center",
-    borderRadius: 5,
-    backgroundColor: "#ffffff",
-    padding: 16,
-  },
-  containerLogo: {
-    marginBottom: 100,
-    textAlign: "center",
-    alignItems: "center",
-    display: "flex",
+    borderColor: "#E0E0E0",
+    borderRadius: 8,
+    marginBottom: 12,
+    backgroundColor: "#FAFAFA",
+    fontSize: 15,
+    color: "#333",
   },
   textoAjuda: {
     fontSize: 12,
-    color: "red",
-    marginBottom: 10,
-    textAlign: "left",
+    color: "#48a165",
+    marginBottom: 12,
     alignSelf: "flex-start",
+  },
+  textoAlerta: {
+    fontSize: 11,
+    color: "#D9534F",
+    alignSelf: "flex-start",
+    marginTop: -4,
+  },
+  buttonLogin: {
+    backgroundColor: "#48a165",
+    borderRadius: 12,
+    paddingVertical: 14,
+    width: "85%",
+    alignItems: "center",
+    elevation: 2,
+    shadowColor: "#48a165",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
